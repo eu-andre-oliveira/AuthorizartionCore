@@ -1,5 +1,5 @@
-﻿using Application.Models.Authorizations;
-using Application.Services.Interfaces;
+﻿using Application.Services.Interfaces;
+using Domain.Models.Authorizations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,6 +27,7 @@ namespace Api.Controllers.v1
         [Authorize]
         public IActionResult Register(RegisterUserRequest registerUserRequest)
         {
+
             return Ok();
         }
     }

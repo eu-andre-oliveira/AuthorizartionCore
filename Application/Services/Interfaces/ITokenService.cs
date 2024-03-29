@@ -1,4 +1,4 @@
-﻿using Application.Models.Authorizations;
+﻿using Domain.Models.Authorizations;
 
 namespace Application.Services.Interfaces
 {

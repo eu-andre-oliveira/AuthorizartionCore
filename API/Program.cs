@@ -1,7 +1,9 @@
 using Application.Configurations.Options;
 using Application.Services;
 using Application.Services.Interfaces;
+using Data.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -14,12 +16,16 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+builder.Services.AddDbContext<AuthorizationDbContext>(opt =>
+    opt.UseSqlServer(connectionString));
+
 builder.Services.AddAuthorization();
 builder.Services.Configure<AuthenticationBearerOptions>(
     builder.Configuration.GetSection(AuthenticationBearerOptions.SectionName));
 builder.Services.AddTransient<ITokenService, TokenService>();
 
-//builder.Services.AddAuthentication("Bearer").AddJwtBearer();
 builder.Services.AddAuthentication(opt =>
  {
      opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

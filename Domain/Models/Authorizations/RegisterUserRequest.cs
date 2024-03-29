@@ -1,4 +1,4 @@
-﻿namespace Application.Models.Authorizations
+﻿namespace Domain.Models.Authorizations
 {
     public class RegisterUserRequest
     {
