@@ -19,27 +19,30 @@ builder.Services.Configure<AuthenticationBearerOptions>(
     builder.Configuration.GetSection(AuthenticationBearerOptions.SectionName));
 builder.Services.AddTransient<ITokenService, TokenService>();
 
-builder.Services.AddAuthentication("Bearer").AddJwtBearer();
-//builder.Services.AddAuthentication(opt =>
-// {
-//     opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-//     opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-// }).AddJwtBearer(opt =>
-// {
-//     opt.TokenValidationParameters = new TokenValidationParameters()
-//     {
-//         ValidateAudience = true,
-//         ValidateIssuer = true,
-//         ValidateLifetime = true,
+//builder.Services.AddAuthentication("Bearer").AddJwtBearer();
+builder.Services.AddAuthentication(opt =>
+ {
+     opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+     opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+ }).AddJwtBearer(opt =>
+ {
+     opt.SaveToken = true;
+     opt.TokenValidationParameters = new TokenValidationParameters()
+     {
+         ValidateAudience = false,
+         ValidateIssuer = false,
+         ValidateLifetime = true,
+         
 
-//         ValidIssuer = builder.Configuration[new AuthenticationBearerOptions().Schemes.Bearer.ValidIssuer],
-//         ValidAudience = builder.Configuration[new AuthenticationBearerOptions().Schemes.Bearer.ValidAudiences[0]],
-//         IssuerSigningKey = new SymmetricSecurityKey(
-//             Encoding.UTF8.GetBytes(builder.Configuration["Authentication:Schemes:Bearer:ValidIssuer"])),
-//         ClockSkew = TimeSpan.Zero
+         //ValidIssuer = builder.Configuration["Authentication:Schemes:Bearer:ValidIssuer"],
+         //ValidAudience = builder.Configuration["Authentication:Schemes:Bearer:ValidAudiences"],
+         
+         IssuerSigningKey = new SymmetricSecurityKey(
+             Encoding.UTF8.GetBytes(builder.Configuration["Authentication:PrivateKey"])),
+         ClockSkew = TimeSpan.Zero
 
-//     };
-// });
+     };
+ });
 
 var app = builder.Build();
 
@@ -52,6 +55,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
