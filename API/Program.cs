@@ -1,7 +1,7 @@
 using Application.Configurations.Options;
 using Application.Services;
 using Application.Services.Interfaces;
-using Data.Context;
+using Data.DataContext;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -9,17 +9,15 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDbContext<ApiContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'ApiContext' not found.")));
+
 // Add services to the container.
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
-builder.Services.AddDbContext<AuthorizationDbContext>(opt =>
-    opt.UseSqlServer(connectionString));
 
 builder.Services.AddAuthorization();
 builder.Services.Configure<AuthenticationBearerOptions>(
@@ -38,15 +36,9 @@ builder.Services.AddAuthentication(opt =>
          ValidateAudience = false,
          ValidateIssuer = false,
          ValidateLifetime = true,
-         
-
-         //ValidIssuer = builder.Configuration["Authentication:Schemes:Bearer:ValidIssuer"],
-         //ValidAudience = builder.Configuration["Authentication:Schemes:Bearer:ValidAudiences"],
-         
          IssuerSigningKey = new SymmetricSecurityKey(
              Encoding.UTF8.GetBytes(builder.Configuration["Authentication:PrivateKey"])),
          ClockSkew = TimeSpan.Zero
-
      };
  });
 

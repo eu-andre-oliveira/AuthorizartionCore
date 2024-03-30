@@ -1,4 +1,5 @@
 ﻿using Application.Services.Interfaces;
+using Data.DataContext;
 using Domain.Models.Authorizations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,10 +11,12 @@ namespace Api.Controllers.v1
     public class AuthorizationController : ControllerBase
     {
         private readonly ITokenService _tokenService;
+        private readonly ApiContext _context;
 
-        public AuthorizationController(ITokenService tokenService)
+        public AuthorizationController(ITokenService tokenService, ApiContext context)
         {
             _tokenService = tokenService;
+            _context = context;
         }
 
         [HttpPost("Login")]
@@ -27,8 +30,7 @@ namespace Api.Controllers.v1
         [Authorize]
         public IActionResult Register(RegisterUserRequest registerUserRequest)
         {
-
-            return Ok();
+            return Ok(_context.MyUsers.ToList());
         }
     }
 }
